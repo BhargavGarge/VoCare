@@ -1,0 +1,136 @@
+"use client";
+
+// Dummy data for categories
+export const dummyCategories = [
+  {
+    id: "1",
+    label: "Medical Checkup",
+    color: "#3b82f6",
+    icon: "stethoscope",
+    description: "Regular medical examinations",
+  },
+  {
+    id: "2",
+    label: "Physical Therapy",
+    color: "#10b981",
+    icon: "activity",
+    description: "Physical rehabilitation sessions",
+  },
+  {
+    id: "3",
+    label: "Consultation",
+    color: "#f59e0b",
+    icon: "message-circle",
+    description: "Doctor consultations",
+  },
+  {
+    id: "4",
+    label: "Surgery",
+    color: "#ef4444",
+    icon: "scissors",
+    description: "Surgical procedures",
+  },
+  {
+    id: "5",
+    label: "Lab Test",
+    color: "#8b5cf6",
+    icon: "test-tube",
+    description: "Laboratory tests and screenings",
+  },
+];
+
+// Dummy data for patients
+export const dummyPatients = [
+  {
+    id: "1",
+    firstname: "John",
+    lastname: "Smith",
+    birth_date: "1980-05-15",
+    care_level: 2,
+    pronoun: "he/him",
+    email: "john.smith@email.com",
+    active: true,
+    active_since: "2023-01-15",
+  },
+  {
+    id: "2",
+    firstname: "Maria",
+    lastname: "Garcia",
+    birth_date: "1975-09-22",
+    care_level: 3,
+    pronoun: "she/her",
+    email: "maria.garcia@email.com",
+    active: true,
+    active_since: "2023-02-10",
+  },
+  {
+    id: "3",
+    firstname: "Robert",
+    lastname: "Johnson",
+    birth_date: "1965-12-08",
+    care_level: 1,
+    pronoun: "he/him",
+    email: "robert.johnson@email.com",
+    active: true,
+    active_since: "2023-03-05",
+  },
+  {
+    id: "4",
+    firstname: "Emma",
+    lastname: "Wilson",
+    birth_date: "1990-03-18",
+    care_level: 2,
+    pronoun: "she/her",
+    email: "emma.wilson@email.com",
+    active: true,
+    active_since: "2023-01-20",
+  },
+  {
+    id: "5",
+    firstname: "Michael",
+    lastname: "Brown",
+    birth_date: "1955-07-30",
+    care_level: 4,
+    pronoun: "he/him",
+    email: "michael.brown@email.com",
+    active: true,
+    active_since: "2022-11-12",
+  },
+];
+
+// Initial dummy appointments
+export const initialAppointments = [
+  {
+    id: "1",
+    title: "Annual Physical Exam",
+    start: "2024-01-15T09:00:00.000Z",
+    end: "2024-01-15T10:00:00.000Z",
+    location: "Room 101",
+    patient: "1",
+    category: "1",
+    notes: "Annual checkup for John Smith",
+    created_at: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "2",
+    title: "Physical Therapy Session",
+    start: "2024-01-16T14:30:00.000Z",
+    end: "2024-01-16T15:30:00.000Z",
+    location: "PT Room A",
+    patient: "2",
+    category: "2",
+    notes: "Knee rehabilitation for Maria",
+    created_at: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "3",
+    title: "Blood Test",
+    start: "2024-01-17T08:00:00.000Z",
+    end: "2024-01-17T08:30:00.000Z",
+    location: "Lab",
+    patient: "3",
+    category: "5",
+    notes: "Routine blood work",
+    created_at: "2024-01-01T00:00:00.000Z",
+  },
+];
