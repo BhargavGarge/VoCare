@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, X, Filter } from "lucide-react";
+import { CalendarIcon, X, Filter, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { useCategories } from "@/hooks/use-categories";
 import { usePatients } from "@/hooks/use-patients";
@@ -83,7 +83,19 @@ export function AppointmentFilters({
           onValueChange={(value) => updateFilter("category", value)}
         >
           <SelectTrigger className="w-56 bg-white shadow-sm border-gray-200">
-            <SelectValue placeholder="All Categories" />
+            <div className="flex items-center gap-2 w-full">
+              {selectedCategory ? (
+                <>
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: selectedCategory.color }}
+                  />
+                  <span>{selectedCategory.label}</span>
+                </>
+              ) : (
+                <span className="text-muted-foreground">All Categories</span>
+              )}
+            </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
@@ -107,7 +119,15 @@ export function AppointmentFilters({
           onValueChange={(value) => updateFilter("patient", value)}
         >
           <SelectTrigger className="w-56 bg-white shadow-sm border-gray-200">
-            <SelectValue placeholder="All Patients" />
+            <div className="flex items-center w-full">
+              {selectedPatient ? (
+                <span>
+                  {selectedPatient.firstname} {selectedPatient.lastname}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">All Patients</span>
+              )}
+            </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Patients</SelectItem>
@@ -119,32 +139,41 @@ export function AppointmentFilters({
           </SelectContent>
         </Select>
 
-        {/* Date Range Filter */}
+        {/* Improved Date Range Filter */}
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-72 justify-start text-left font-normal bg-white shadow-sm border-gray-200"
+              className="w-72 justify-between font-normal bg-white shadow-sm border-gray-200 hover:bg-gray-50"
             >
-              <CalendarIcon className="mr-2 h-4 w-4 text-blue-500" />
-              {dateRange.from ? (
-                dateRange.to ? (
-                  <>
-                    {format(dateRange.from, "MMM dd, yyyy")} -{" "}
-                    {format(dateRange.to, "MMM dd, yyyy")}
-                  </>
-                ) : (
-                  format(dateRange.from, "MMM dd, yyyy")
-                )
-              ) : (
-                "Select date range"
-              )}
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="h-4 w-4 text-blue-500" />
+                <span>
+                  {dateRange.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "MMM dd, yyyy")} -{" "}
+                        {format(dateRange.to, "MMM dd, yyyy")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "MMM dd, yyyy")
+                    )
+                  ) : (
+                    "Select date range"
+                  )}
+                </span>
+              </div>
+              <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               initialFocus
               mode="range"
+              selected={{
+                from: dateRange.from,
+                to: dateRange.to,
+              }}
               onSelect={(range) => {
                 const safeRange = {
                   from: range?.from ?? undefined,
@@ -154,6 +183,33 @@ export function AppointmentFilters({
                 updateFilter("dateRange", safeRange);
               }}
               numberOfMonths={2}
+              className="border-0"
+              classNames={{
+                months: "gap-6", // Added gap between months
+                month: "space-y-4",
+                caption: "flex justify-center pt-1 relative items-center",
+                caption_label: "text-md font-bold text-blue-700",
+                nav: "space-x-1 flex items-center",
+                nav_button:
+                  "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                nav_button_previous: "absolute left-1",
+                nav_button_next: "absolute right-1",
+                table: "w-full border-collapse space-y-1",
+                head_row: "flex",
+                head_cell:
+                  "text-gray-500 rounded-md w-9 font-normal text-[0.8rem]",
+                row: "flex w-full mt-2",
+                cell: "h-9 w-9 text-center text-sm p-0 relative",
+                day: "h-8 w-8 p-0 font-normal rounded-md hover:bg-gray-100",
+                day_range_end: "rounded-r-md",
+                day_selected: "bg-blue-500 text-white hover:bg-blue-600",
+                day_today: "border border-blue-300",
+                day_outside: "text-gray-400 opacity-50",
+                day_disabled: "text-gray-400 opacity-50",
+                day_range_middle:
+                  "aria-selected:bg-blue-100 aria-selected:text-blue-800",
+                day_hidden: "invisible",
+              }}
             />
           </PopoverContent>
         </Popover>

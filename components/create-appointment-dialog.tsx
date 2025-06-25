@@ -262,20 +262,30 @@ export function CreateAppointmentDialog({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-left font-normal border-gray-200 focus:border-blue-500"
+                  className="w-full justify-start text-left font-normal hover:bg-gray-50 h-10"
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4 text-blue-500" />
-                  {formData.date
-                    ? format(formData.date, "EEEE, MMMM dd, yyyy")
-                    : "Select date"}
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.date ? (
+                    format(formData.date, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
                   selected={formData.date}
                   onSelect={(date) => setFormData({ ...formData, date })}
                   initialFocus
+                  className="rounded-md border"
+                  classNames={{
+                    day_selected: "bg-blue-500 text-white hover:bg-blue-600",
+                    day_today: "border border-blue-300",
+                    head_cell: "text-gray-500 font-medium text-xs",
+                    cell: "rounded-md",
+                    day: "hover:bg-gray-100 rounded-md h-9 w-9 p-0 font-normal",
+                  }}
                 />
               </PopoverContent>
             </Popover>

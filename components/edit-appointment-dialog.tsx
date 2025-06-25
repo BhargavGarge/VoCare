@@ -18,7 +18,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -59,6 +58,7 @@ export function EditAppointmentDialog({
     location: "",
     notes: "",
   });
+
   useEffect(() => {
     if (appointment && open) {
       const startDate = appointment.start
@@ -172,7 +172,17 @@ export function EditAppointmentDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent
+        className="sm:max-w-md"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => {
+          // Only allow escape if no dropdowns are open
+          const openSelects = document.querySelectorAll('[data-state="open"]');
+          if (openSelects.length > 0) {
+            e.preventDefault();
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Edit Appointment</DialogTitle>
         </DialogHeader>
@@ -202,14 +212,21 @@ export function EditAppointmentDialog({
               }
             >
               <SelectTrigger className="border-gray-200 focus:border-blue-500">
-                <SelectValue
-                  placeholder={
-                    formData.category
-                      ? categories.find((c) => c.id === formData.category)
-                          ?.label || "Select category"
-                      : "Select category"
-                  }
-                />
+                <div className="flex items-center gap-2 w-full">
+                  {selectedCategory ? (
+                    <>
+                      <span
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: selectedCategory.color }}
+                      />
+                      <span>{selectedCategory.label}</span>
+                    </>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      Select category
+                    </span>
+                  )}
+                </div>
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
@@ -237,19 +254,17 @@ export function EditAppointmentDialog({
               }
             >
               <SelectTrigger className="border-gray-200 focus:border-blue-500">
-                <SelectValue
-                  placeholder={
-                    formData.patient
-                      ? `${
-                          patients.find((p) => p.id === formData.patient)
-                            ?.firstname ?? ""
-                        } ${
-                          patients.find((p) => p.id === formData.patient)
-                            ?.lastname ?? ""
-                        }`.trim()
-                      : "Select patient"
-                  }
-                />
+                <div className="flex items-center w-full">
+                  {selectedPatient ? (
+                    <span>
+                      {selectedPatient.firstname} {selectedPatient.lastname}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      Select patient
+                    </span>
+                  )}
+                </div>
               </SelectTrigger>
               <SelectContent>
                 {patients.map((patient) => (
@@ -262,26 +277,40 @@ export function EditAppointmentDialog({
           </div>
 
           {/* Date */}
-          <div>
-            <Label>Date *</Label>
-            <Popover>
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <CalendarIcon className="w-4 h-4 text-orange-500" />
+              Date *
+            </Label>
+            <Popover modal={true}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-left font-normal"
+                  className="w-full justify-start text-left font-normal hover:bg-gray-50 h-10"
+                  type="button"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.date
-                    ? format(formData.date, "MM/dd/yyyy")
-                    : "Select date"}
+                  {formData.date ? (
+                    format(formData.date, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
                   selected={formData.date}
                   onSelect={(date) => setFormData({ ...formData, date })}
                   initialFocus
+                  className="rounded-md border"
+                  classNames={{
+                    day_selected: "bg-blue-500 text-white hover:bg-blue-600",
+                    day_today: "border border-blue-300",
+                    head_cell: "text-gray-500 font-medium text-xs",
+                    cell: "rounded-md",
+                    day: "hover:bg-gray-100 rounded-md h-9 w-9 p-0 font-normal",
+                  }}
                 />
               </PopoverContent>
             </Popover>

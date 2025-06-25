@@ -33,13 +33,10 @@ const PopoverTrigger = ({
   if (!context) return null;
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<any>, {
-      ...children.props,
+    return React.cloneElement(children, {
       onClick: (e: any) => {
         context.setOpen(!context.open);
-        if (typeof children.props.onClick === "function") {
-          children.props.onClick(e);
-        }
+        children.props.onClick?.(e);
       },
     });
   }
@@ -56,11 +53,17 @@ const PopoverContent = React.forwardRef<
   const context = React.useContext(PopoverContext);
   if (!context || !context.open) return null;
 
+  let positionClass = "left-0";
+  if (align === "end") positionClass = "right-0";
+  if (align === "center") positionClass = "left-1/2 transform -translate-x-1/2";
+
   return (
     <div
       ref={ref}
       className={cn(
-        "absolute z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none top-full mt-1",
+        "absolute z-50 rounded-md border bg-popover p-0 text-popover-foreground shadow-md outline-none animate-in fade-in-0 zoom-in-95",
+        `top-full mt-${sideOffset}`,
+        positionClass,
         className
       )}
       {...props}
