@@ -1,11 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client
-const supabaseUrl = "https://sljilzeejvapihghhcrs.supabase.co";
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsamlsemVlanZhcGloZ2hoY3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTA2NjAsImV4cCI6MjA2NDM2NjY2MH0.jYTTW1cj3EQLPqVpgKqwV18kvujMjLpy7oVZq7THPTQ";
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+if (
+  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+) {
+  throw new Error(
+    "Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables"
+  );
+}
+
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+);
 
 // Database Types
 export interface Category {

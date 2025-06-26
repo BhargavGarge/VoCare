@@ -3,6 +3,7 @@
 import * as React from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import * as RadixDialog from "@radix-ui/react-dialog";
 
 interface DialogContextType {
   open: boolean;
@@ -23,11 +24,16 @@ const Dialog = ({
   onOpenChange?: (open: boolean) => void;
 }) => {
   return (
-    <DialogContext.Provider
-      value={{ open: open || false, onOpenChange: onOpenChange || (() => {}) }}
-    >
-      {children}
-    </DialogContext.Provider>
+    <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
+      <DialogContext.Provider
+        value={{
+          open: open || false,
+          onOpenChange: onOpenChange || (() => {}),
+        }}
+      >
+        {children}
+      </DialogContext.Provider>
+    </RadixDialog.Root>
   );
 };
 
@@ -39,55 +45,40 @@ const DialogTrigger = ({
   children: React.ReactNode;
   asChild?: boolean;
 } & React.HTMLAttributes<HTMLElement>) => {
-  const context = React.useContext(DialogContext);
-  if (!context) return null;
-
-  if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<any>, {
-      ...props,
-      onClick: (e: any) => {
-        context.onOpenChange(true);
-        if (typeof children.props.onClick === "function") {
-          children.props.onClick(e);
-        }
-      },
-    });
-  }
-
   return (
-    <button {...props} onClick={() => context.onOpenChange(true)}>
+    <RadixDialog.Trigger asChild={asChild} {...props}>
       {children}
-    </button>
+    </RadixDialog.Trigger>
   );
 };
 
 const DialogContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  React.ComponentPropsWithoutRef<typeof RadixDialog.Content>
 >(({ className, children, ...props }, ref) => {
-  const context = React.useContext(DialogContext);
-  if (!context || !context.open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-      <div
+    <RadixDialog.Portal>
+      <RadixDialog.Overlay className="fixed inset-0 z-50 bg-black/80" />
+      <RadixDialog.Content
         ref={ref}
         className={cn(
-          "relative bg-background p-6 shadow-lg duration-200 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto",
+          "fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background p-6 shadow-lg duration-200 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto",
           className
         )}
         {...props}
       >
         {children}
-        <button
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          onClick={() => context.onOpenChange(false)}
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </button>
-      </div>
-    </div>
+        <RadixDialog.Close asChild>
+          <button
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
+        </RadixDialog.Close>
+      </RadixDialog.Content>
+    </RadixDialog.Portal>
   );
 });
 DialogContent.displayName = "DialogContent";

@@ -10,6 +10,7 @@ interface SelectContextType {
   open: boolean;
   setOpen: (open: boolean) => void;
   placeholder?: string;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const SelectContext = React.createContext<SelectContextType | undefined>(
@@ -20,10 +21,12 @@ const Select = ({
   children,
   value,
   onValueChange,
+  onOpenChange, // ✅ now accepted
 }: {
   children: React.ReactNode;
   value?: string;
   onValueChange?: (value: string) => void;
+  onOpenChange?: (open: boolean) => void; // ✅ added
 }) => {
   const [open, setOpen] = React.useState(false);
   const [displayText, setDisplayText] = React.useState(value || "");
@@ -33,12 +36,14 @@ const Select = ({
       const target = event.target as Element;
       if (!target.closest("[data-select-root]")) {
         setOpen(false);
+        onOpenChange?.(false);
       }
     };
 
     if (open) {
-      document.addEventListener("click", handleClickOutside);
-      return () => document.removeEventListener("click", handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [open]);
 
@@ -56,7 +61,11 @@ const Select = ({
         value: value || "",
         onValueChange: onValueChange || (() => {}),
         open,
-        setOpen,
+        setOpen: (openState: boolean) => {
+          setOpen(openState);
+          onOpenChange?.(openState); // ✅ triggers parent
+        },
+        onOpenChange, // ✅ pass down
       }}
     >
       <div className="relative" data-select-root>
@@ -82,7 +91,8 @@ const SelectTrigger = React.forwardRef<
       )}
       onClick={(e) => {
         e.stopPropagation();
-        context.setOpen(!context.open);
+        const newState = !context.open;
+        context.setOpen(newState); // ✅ automatically triggers onOpenChange
       }}
       {...props}
     >
@@ -146,7 +156,7 @@ const SelectItem = ({
       )}
       onClick={() => {
         context.onValueChange(value);
-        context.setOpen(false);
+        context.setOpen(false); // ✅ triggers onOpenChange(false)
       }}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
