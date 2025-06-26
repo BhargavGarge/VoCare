@@ -64,8 +64,9 @@ export function CreateAppointmentDialog({
     e.preventDefault();
     if (!formData.title || !formData.date || !formData.startTime) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields.",
+        title: "⚠️ Missing Information",
+        description:
+          "Please fill in the appointment title, date, and start time.",
         variant: "destructive",
       });
       return;
@@ -101,8 +102,8 @@ export function CreateAppointmentDialog({
       });
 
       toast({
-        title: "Success",
-        description: "Appointment created successfully.",
+        title: "✅ Appointment Created",
+        description: `Successfully created "${formData.title}" appointment.`,
       });
 
       // Reset form
@@ -122,9 +123,8 @@ export function CreateAppointmentDialog({
       onAppointmentCreated?.();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create appointment.",
-        variant: "destructive",
+        title: "❌ Creation Failed",
+        description: "Failed to create appointment. Please try again.",
       });
     } finally {
       setLoading(false);

@@ -42,8 +42,22 @@ export function AppointmentFilters({
     to: filters.dateRange.to ?? undefined,
   });
 
-  const updateFilter = (key: string, value: any) => {
-    onFiltersChange({ ...filters, [key]: value });
+  const updateFilter = (
+    key: keyof AppointmentFiltersProps["filters"],
+    value: any
+  ) => {
+    const newFilters = { ...filters };
+    if (value === "") {
+      // Set to empty string or empty object depending on key
+      if (key === "dateRange") {
+        newFilters[key] = { from: undefined, to: undefined };
+      } else {
+        newFilters[key] = "";
+      }
+    } else {
+      newFilters[key] = value;
+    }
+    onFiltersChange(newFilters);
   };
 
   const clearFilters = () => {
@@ -56,8 +70,8 @@ export function AppointmentFilters({
   };
 
   const hasActiveFilters =
-    filters.category ||
-    filters.patient ||
+    filters.category !== "" ||
+    filters.patient !== "" ||
     filters.dateRange.from ||
     filters.dateRange.to;
 
@@ -98,7 +112,7 @@ export function AppointmentFilters({
             </div>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="">All Categories</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 <div className="flex items-center gap-2">
@@ -130,7 +144,7 @@ export function AppointmentFilters({
             </div>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Patients</SelectItem>
+            <SelectItem value="">All Patients</SelectItem>
             {patients.map((patient) => (
               <SelectItem key={patient.id} value={patient.id}>
                 {patient.firstname} {patient.lastname}
